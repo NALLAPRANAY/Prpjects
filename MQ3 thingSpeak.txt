@@ -1,0 +1,50 @@
+#include "ThingSpeak.h"
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h> 
+WiFiClient  client;
+
+char ssid[] = ""; //SSID
+char pass[] = ""; // Password
+
+unsigned long Channel_ID =1717065 ; // Channel ID
+const char * WriteAPIKey = "OPNVLQYQLK5KDB7V"; // Your write API Key
+const int Field_number = 1;
+
+const int MQ3=A0;
+
+void setup() {
+
+  Serial.begin(9600);
+  WiFi.mode(WIFI_STA);
+  
+
+  Serial.println("MQ3");
+
+  delay(20000);
+ 
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.print("Attempting to connect to SSID: ");
+    Serial.println(ssid);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+      WiFi.begin(ssid, pass);
+      Serial.print(".");
+      delay(1000);
+    }
+    Serial.println("\nConnected.");
+  }
+  ThingSpeak.begin(client);
+
+}
+void loop() {
+
+  sensorValue = analogRead(MQ3); // read analog input pin 0
+
+  Serial.print("Sensor Value: ");
+
+  Serial.print(sensorValue);
+  ThingSpeak.writeField(Channel_ID, Field_number, sensorValue, WriteAPIKey);
+  
+}
+

@@ -1,0 +1,63 @@
+#include "ThingSpeak.h"
+#include <ESP8266WiFi.h>
+#include <WiFiClient.h> 
+WiFiClient  client;
+
+#include<Servo.h>
+Servo servo
+
+char ssid[] = ""; //SSID
+char pass[] = ""; // Password
+
+unsigned long Channel_ID =1717065 ; // Channel ID
+const char * WriteAPIKey = "OPNVLQYQLK5KDB7V"; // Your write API Key
+const int Field_number = 1;
+
+int trigPin = 10;
+int echoPin = 9;
+int servoPin = 7;
+int distance;
+int count;
+void setup() {       
+    Serial.begin(9600);//begin serial monitor
+    servo.attach(servoPin);  //attaching the servo
+    pinMode(trigPin, OUTPUT);  
+    pinMode(echoPin, INPUT);
+    servo.write(0); 
+    servo.detach();
+if (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.print("Attempting to connect to SSID: ");
+    Serial.println(ssid);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+      WiFi.begin(ssid, pass);
+      Serial.print(".");
+      delay(1000);
+    }
+    Serial.println("\nConnected.");
+  }
+  ThingSpeak.begin(client);
+}
+
+void loop(){
+
+digitalWrite(trigPin2, LOW); //sets the triger to low
+delayMicroseconds(5);//delay of 5microseconds
+digitalWrite(trigPin2, HIGH);//sets the trigger to high
+delayMicroseconds(15);
+digitalWrite(trigPin2, LOW);
+pinMode(echoPin2, INPUT);
+duration2 = pulseIn(echoPin2, HIGH);//reads the echo and stores in duration2
+distance = (duration2/2) / 29.1;    //obtain distance
+ if(distance<25){
+
+servo.attach(servopin);
+servo.write(90);
+delay(3000);
+servo.write(0);
+servo.detach();
+count+=1;
+ThingSpeak.writeField(Channel_ID, Field_number,count, WriteAPIKey);
+}
+}
